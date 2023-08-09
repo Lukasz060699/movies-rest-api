@@ -16,7 +16,7 @@ class Movies extends Model
         'producion_country'];
 
     public function genres(){
-        return $this->belongsToMany(Genres::class, 'movie_genre');
+        return $this->belongsToMany(Genres::class, 'movie_genre', 'movie_id', 'genre_id');
     }
 
     public function ratings(){

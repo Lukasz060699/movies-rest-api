@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
+Route::get('/movies', 'App\Http\Controllers\MovieController@index');
+Route::post('/movies', 'App\Http\Controllers\MovieController@store');
+Route::get('/movies/search', 'App\Http\Controllers\MovieController@searchByTitle');
+Route::get('/movies/{id}', 'App\Http\Controllers\MovieController@show');
+Route::put('/movies/{id}', 'App\Http\Controllers\MovieController@update');
+Route::delete('/movies/{id}', 'App\Http\Controllers\MovieController@destroy');
+Route::post('/genres', 'App\Http\Controllers\GenreController@store');
