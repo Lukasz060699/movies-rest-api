@@ -68,6 +68,13 @@ class GenreController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $genre = Genres::findOrFail($id);
+
+        if ($genre->movies->count() > 0) {
+            return response()->json(['message' => 'Cannot delete category with associated movies.'], 403);
+        }
+        
+        $genre->delete();
+        return response()->json(null, 204);
     }
 }

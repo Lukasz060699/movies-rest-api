@@ -115,6 +115,7 @@ class MovieController extends Controller
     public function destroy(string $id)
     {
         $movie = Movies::findOrFail($id);
+        $movie->ratings()->delete();
         $movie->genres()->detach();
         Storage::disk('public')->delete($movie->cover_image);
         $movie->delete();
