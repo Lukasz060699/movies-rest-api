@@ -1,46 +1,68 @@
+# REST API - zarządzanie filmami 
 
+## Wykorzystane technologie
 
-## About Laravel
+- Laravel
+- PHP
+- MySQL
+- Postman (testy)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Należy zaimportować bazę danych ```movies.sql```.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Endpointy
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Aplikacja posiada podstawowe uwierzytelnianie. Użytkownicy mogą mieć jedną z dwóch ról: admin, user.
 
-## Learning Laravel
+- **Administrator** ma dostęp do wszystkich zasobów oraz ich dodawania/modyfikowania/usuwania
+- **Użytkownik** może wyświetlać filmy oraz dodawać i usuwać opinię do danego filmu
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+W celu przetestowania endpointów z użyciem Postmana należy najpierw uruchomić aplikację serwerową, a następnie wybrać jeden z linków, wkleić go do pola URL, ustawić odpowiednią metodę HTTP i kliknąć Send. 
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Logowanie i wylogowywanie
+1. Logowanie: http://localhost:8000/api/login **POST**
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+    Przykładowe RequestBody:
+   ```
+   Admin:
+   {
+    "email": "adam@email.com",
+    "password": "password"
+   }
+   User:
+   {
+    "email": "john@email.com",
+    "password": "password"
+   }
+   ```
+   Zostanie wygenerowany token, który należy umieścić w polu ```Token``` w zakładce ```Authorization```.
+   
+3. Wylogowywanie: http://localhost:8000/api/logout **POST**
 
-## Laravel Sponsors
+### Gatunki
+1. Dodaj gatunek filmu: http://localhost:8000/api/genres **POST**
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+   Przykładowe RequestBody:
+   ```
+   {
+    "name": "Komedia"
+   }
+   ```
+3. Usuń gatunek o podanym id: http://localhost:8000/api/genres/{id} **DELETE**
 
-### Premium Partners
+### Filmy
+1. Dodaj film: http://localhost:8000/api/movies **POST**
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+   W celu przetestowania dodawania filmu należy przejść w Postmanie do zakładki ```Body```, a następnie wybrać ```form-data``` (ze względu na wgrywanie okładki).
+    
+3. Aktualizuj film: http://localhost:8000/api/movies/{id} **PUT**
+4. Wyświetl dane o wszystkich filmach: http://localhost:8000/api/movies **GET**
+5. Wyświetl dane filmu o podanym id: http://localhost:8000/api/movies/{id} **GET**
+6. Znajdź film po tytule: http://localhost:8000/api/movies/search?title=nazwa_filmu **GET**
+7. Usuń film o podanym id: http://localhost:8000/api/movies/{id} **DELETE**
+
+### Ocena filmów
+1. Dodaj ocenę filmu o podanym id: http://localhost:8000/api/movies/{id}/rate **POST**
+2. Usuń ocenę danego filmu: http://localhost:8000/api/movies/{id}/rate **DELETE**
 
 ## Contributing
 
