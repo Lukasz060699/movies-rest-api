@@ -28,36 +28,46 @@ class RatingController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created movie rating in storage.
+     *
+     * @param \Illuminate\Http\Request $request The request object.
+     * @param int $id The ID of the movie.
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request, $id)
     {
         try { 
 
+            // Check if the user is authenticated
             if(!Auth::check()){
                 throw ValidationException::withMessages(['message' => 'Non-authenticated user.']);
             }
 
+            // Find the movie by ID
             $movie = Movies::find($id);
             if(!$movie){
                 throw ValidationException::withMessages(['message' => 'The film does not exist.']);
             }
 
+            // Check if the user has already rated this movie
             $existingRating = Ratings::where('user_id', Auth::id())->where('movie_id', $id)->first();
             if($existingRating){
                 throw ValidationException::withMessages(['message' => 'A user has already rated this movie.']);
             }
 
+            // Validate the request data
             $data = $request->validate([
                 'rating_value' => 'required|integer|between:1,5',
             ]);
             
+            // Create a new rating
             $rating = Ratings::create([
                 'movie_id' => $id,
                 'user_id' => Auth::id(),
                 'rating_value' => $data['rating_value'],
             ]);
 
+            // Calculate and update the average rating for the movie
             $averageRating = Ratings::where('movie_id', $id)->avg('rating_value');
             $movie->average_rating = $averageRating;
             $movie->save();
@@ -95,25 +105,33 @@ class RatingController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified movie rating from storage.
+     *
+     * @param string $id The ID of the movie.
+     * @return \Illuminate\Http\JsonResponse
      */
     public function destroy(string $id)
     {
         try {
+            // Check if the user is authenticated
             if (!Auth::check()) {
                 throw ValidationException::withMessages(['message' => 'Non-authenticated user.']);
             }
 
+             // Find the movie by ID
             $movie = Movies::find($id);
             if(!$movie){
                 throw ValidationException::withMessages(['message' => 'The film does not exist.']);
             }
     
+            // Check if the user has rated this movie
             $rating = Ratings::where('user_id', Auth::id())->where('movie_id', $id)->first();
             if (!$rating) {
                 throw ValidationException::withMessages(['message' => 'User has not rated this movie.']);
             }
     
+            // Delete the rating and update the average rating
+            $rating->delete();
             $rating->delete();
             $averageRating = Ratings::where('movie_id', $id)->avg('rating_value');
             $movie->average_rating = $averageRating;

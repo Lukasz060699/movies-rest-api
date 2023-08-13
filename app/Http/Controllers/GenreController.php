@@ -25,17 +25,23 @@ class GenreController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @param  Request  $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
+        // Validate user input
         $data = $request->validate([
             'name' => 'required|string|unique:genres,name',
         ]);
 
+        // Create a new genre
         $genre = Genres::create([
             'name' => $data['name'],
         ]);
 
+        // Return a response indicating successful creation
         return response()->json($genre, 201);
     }
 
@@ -68,13 +74,18 @@ class GenreController extends Controller
      */
     public function destroy(string $id)
     {
+        // Find the genre by ID
         $genre = Genres::findOrFail($id);
 
+        // Check if the genre has associated movies
         if ($genre->movies->count() > 0) {
             return response()->json(['message' => 'Cannot delete category with associated movies.'], 403);
         }
-        
+
+        // Delete the genre
         $genre->delete();
+
+        // Return a response indicating successful deletion
         return response()->json(null, 204);
     }
 }
